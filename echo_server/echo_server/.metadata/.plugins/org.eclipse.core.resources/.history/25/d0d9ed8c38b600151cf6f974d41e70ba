@@ -1,0 +1,49 @@
+
+import java.net.*; 
+import java.io.*; 
+
+public class lab1server {
+	 public static void main(String[]args){
+		 try{
+			 ServerSocket serverSocket = null; 
+
+			    try {serverSocket = new ServerSocket(9876);} 
+			    catch (Exception e) {e.getStackTrace();} 
+
+			    Socket clientSocket = null; 
+			    System.out.println ("Waiting for connection.....");
+
+			    try {clientSocket = serverSocket.accept();} 
+			    catch (Exception e) {e.getStackTrace();} 
+
+			    System.out.println ("Connection successful");
+			    System.out.println ("Waiting for input.....");
+
+			    PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true); 
+			    BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+			    BufferedReader socket_reader = new BufferedReader(new InputStreamReader( clientSocket.getInputStream())); 
+
+			    String inputLine; 
+			/*
+			    while ((inputLine = socket_reader.readLine()) != null){ 
+			         System.out.println ("Server: " + inputLine); 
+			         writer.println(inputLine); 
+			    } 
+			*/
+			   while ((inputLine = socket_reader.readLine()) != null) {
+			        System.out.println("receive: " + inputLine);
+			        inputLine = reader.readLine();
+
+			        writer.println(inputLine);
+			                               
+			    }
+
+			    writer.close(); 
+			    socket_reader.close(); 
+			    clientSocket.close(); 
+			    serverSocket.close(); 
+			    
+		 }catch(Exception e){e.getStackTrace();}
+	 }
+
+}

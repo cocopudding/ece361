@@ -1,0 +1,34 @@
+
+import java.net.*; 
+import java.io.*; 
+
+public class lab1server {
+	 public static void main(String[]args){
+		 try{
+			 ServerSocket serverSocket = null; 
+			 serverSocket = new ServerSocket(9876);
+			 
+			 Socket clientSocket = null; 
+			 clientSocket = serverSocket.accept();
+			 System.out.println ("Client online");
+			 
+			 DataOutputStream writer = new DataOutputStream(clientSocket.getOutputStream());
+			 BufferedReader client_reader = new BufferedReader(new InputStreamReader( clientSocket.getInputStream())); 
+			 writer.writeBytes("Welcome" + "\r\n");
+			 
+			 
+			 while (true) {
+				 String user_input=client_reader.readLine();
+				 System.out.println("receive: " + user_input);
+				 writer.writeBytes(user_input + "\r\n");
+				 
+			 }
+			 //writer.close(); 
+
+			    //clientSocket.close(); 
+			  //  serverSocket.close(); 
+			 
+		 }catch(Exception e){e.getStackTrace();}
+	 }
+
+}

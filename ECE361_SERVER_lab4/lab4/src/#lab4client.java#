@@ -1,0 +1,136 @@
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStreamReader;
+import java.net.Socket;
+import java.util.Scanner;
+import java.lang.Thread;
+
+
+public class lab4client {
+	static int lastAck = 0;
+
+	
+	public static void main(String[] args) {
+		try {
+			// define a (client socket)
+			Socket socket = new Socket("localhost", 9878);
+			BufferedReader socket_bf = new BufferedReader(
+					new InputStreamReader(socket.getInputStream()));
+			
+			DataInputStream InputData=new DataInputStream (socket.getInputStream());
+			
+		
+            DataOutputStream socket_dos = new DataOutputStream(
+					socket.getOutputStream());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+            
+            Scanner scr=new Scanner(System.in);
+            	
+            	 System.out.println("Enter number of packets to be sent to the server\n");
+            	int noPackets = scr.nextInt();
+
+            	socket_dos.write(noPackets);
+            	
+            	long EstimatedRTT = 1200;
+            	int cwnd =1;
+
+
+            	int sent=0;
+            	int i=1;
+            	long startTime = 1;
+            	int timeout = 0;
+            	int ssthresh = 15;
+            	Thread thread=new Thread(new Listener(socket));
+  				thread.start();
+  				long beginningTime=System.currentTimeMillis();
+            	while(sent<noPackets){
+            		if (lastAck == -1)
+            			break;
+            		 System.out.println("cwnd = "+cwnd+"\n");
+            		while(i<=cwnd && sent<noPackets)
+            		{
+            			 sent=sent+1;
+            			 startTime=System.currentTimeMillis();
+            			 timeout = 0;
+            			 socket_dos.write(sent);
+            			 System.out.print("Sending packet no: "+sent+"\n");
+            			 i++;
+            			 
+            		}
+            		//System.out.println("last ack before!!!!: = "+lastAck+"\n");
+        			//System.out.println("sent before!!! : = "+sent+"\n");
+            		//System.out.println("startTime!!!!: = "+startTime+"\n");
+            		//System.out.println("endtime!!!!: = "+System.currentTimeMillis()+"\n");
+        			//System.out.println("TIME!!! : = "+(System.currentTimeMillis() - startTime)+"\n");
+            		while( lastAck < sent && timeout ==0)
+            		
+            		{
+            			//System.out.println("last ack before2!!!!: = "+lastAck+"\n");
+            			timeout = 0;
+            			//System.out.println("last ack!!!!: = "+lastAck+"\n");
+            			//System.out.println("sent!!! : = "+sent+"\n");
+            			if((System.currentTimeMillis() - startTime) > EstimatedRTT)
+            			{
+            				//System.out.println("last ack!!!!: = "+lastAck+"\n");
+            				//System.out.println("sent!!! : = "+sent+"\n");
+            				timeout = 1;
+            			   break;	
+            			}
+            		}
+            		i = 1;
+            		  
+        			   
+            		System.out.println("last ack: "+lab4client.lastAck+"\n");
+            		
+            		//fast recovery
+            		 if(timeout==1&&lastAck !=sent)
+            		 {
+            			 System.out.println("Timeout!\n");
+            			 //if(cwnd<10){
+            				// ssthresh=10;
+            			 //}
+           			 sent = lastAck+1;
+            			 ssthresh = cwnd/2;
+            			 cwnd = 1;
+            			             			 
+            		 }
+            		 else
+            		 {
+            			 //slow start
+            			 if(ssthresh >  cwnd)
+            			 {
+            				 cwnd = 2*cwnd; 
+            			 }
+            			 //congestion avoidance
+            			 else
+            			 {
+            				 cwnd = cwnd+1;
+            			 }
+            			 
+            		 }
+            		
+            		
+            	}
+    			long endTime = System.currentTimeMillis();
+    			long totalTime = endTime - beginningTime;
+    			System.out.println("No. of packets = " + noPackets);
+    			System.out.println("Total time = " + totalTime);
+            	
+            socket.close();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+	}
+	public static void setAckNum (int ackNum)
+	{
+		if (lastAck<ackNum)
+		lab4client.lastAck = ackNum;
+		//System.out.println("last ack set to: = "+lastAck+"\n");
+	}
+}

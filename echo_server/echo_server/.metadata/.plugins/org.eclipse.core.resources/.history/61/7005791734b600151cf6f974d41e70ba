@@ -1,0 +1,17 @@
+import java.io.*;
+import java.net.*;
+
+public class lab1client {
+
+
+		 public static void main(String[]args){
+		System.out.println("Hello World");// prints Hello World
+		try{
+			Socket socket = new Socket("localhost",9876);
+			
+			
+		}catch(Exception e){e.getStackTrace();}
+		
+		}
+
+}

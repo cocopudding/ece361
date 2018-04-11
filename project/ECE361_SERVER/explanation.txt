@@ -1,0 +1,20 @@
+
+Group Code: w7s9
+
+The project is mainly divided into two parts.
+
+The first part is the shortest path computation, and it realizes the following:
+-  Get node information from the server and organize them
+-  Uses Dijkstra's Algorithm to find the shortest path between any two node
+-  Return the shortest path from node 0(self) to node "node -1"(server)
+
+The second part is the file transfer, and it realizes the following :
+-  If a file exists, send the file name and no of packets to the server
+-  Create a 2D byte array to store the content of the file
+-  Create a new thread to continuously update "lastAck"
+-  Transfer the file in packets of size of 1004
+-  Adjust the cwnd window accordingly
+-  Retransmit the lost packets
+-  Reset cwnd and ssthresh in case of timeout
+
+Thank you  and have a great day!

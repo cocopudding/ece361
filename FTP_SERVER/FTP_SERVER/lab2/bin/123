@@ -1,0 +1,19 @@
+File transfer/ FTP
+Section 1: Simple file transfer
+In this section, you will write a server-client pair (two applications; one running as server and one as client) that can communicate with each other to transfer a file. You should implement both server and client.
+
+Scenario:
+1. Similar to the chat client-server pair (Lab 1 instruction) you will need a ServerSocket in the server that waits until a client connects. 
+
+2. After having a socket connected, the client requests a file from server by sending the file name.
+
+3. The server looks for the file in its system (only the current working directory). If the file exists, it will send a message to client notifying that the file transfer is about to begin. If the file does not exist, server sends an error message letting the client know that the file is not found on the server.  
+
+In order to open/create a file, you can use the java.io.File library (e.g. File file=new File(filename);). 
+In order to check for the existence of the file you can use the file.exists() method.
+You can read and write from/to a file via the read() and write() methods of java.io.FileInputStream fin = new FileInputStream(File file) and java.io.FileOutputStream fout = new FileOutputStream(File file) respectively.
+DON’T forget to close the input and output streams (in this case, fin.close() and fout.close()) after you are finished with the file. Otherwise there is a high chance that your file would not be stored properly.
+
+4. Once the client receives the server’s response to its request, and if the response does not indicate an “error”, it starts to receive the file content until the transfer is complete and the server closes the socket. Likewise, the server, after sending the notification to client, starts the file transfer. Once the transfer is complete, the server closes the connection and goes back to step 1 (waiting for the next request to arrive).
+
+5. In the previous lab instructions, you learned how to write and read lines of text using java.io.DataOutputStream and java.io.BufferedReader via the writebytes(String str) and String str=readline() methods. For transferring the file (bytes of data), you can use DataInputStream din=new DataInputStream (socket.getInputStream()) and DataOutputStream dout=new DataOutputStream (socket.getOutputStream()) via the read(byte[] b, int off, int len) and write(byte[] b, int off, int len) methods. To send the files, define a byte array with arbitrary size (e.g. byte[]=new byte[1024]) and iteratively read chunks of data and send it to the client, until the end of file is reached. Note that the last chunk of data, is not necessarily equal to your defined array length. Therefore, you need to send only the amount of bytes that you have read from the file. To do that, you can look at the returned value of fin.read() method. The returned value is the number of read bytes.  You can use it as the len input for the write(byte[] b, int off, int len) method when writing to socket.

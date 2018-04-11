@@ -1,0 +1,23 @@
+
+import java.net.*; 
+import java.io.*; 
+
+public class lab1server {
+	 public static void main(String[]args){
+		 try{
+			 ServerSocket serverSocket = null; 
+			 serverSocket = new ServerSocket(9876);
+			 
+			 Socket clientSocket = null; 
+			 clientSocket = serverSocket.accept();
+			 System.out.println ("Client online");
+			 
+			 DataOutputStream writer = new DataOutputStream(clientSocket.getOutputStream());
+			 writer.writeBytes("Welcome" + "\r\n");
+			 
+			 
+			 
+		 }catch(Exception e){e.getStackTrace();}
+	 }
+
+}
